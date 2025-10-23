@@ -1,0 +1,23 @@
+DELIMITER //
+CREATE FUNCTION THREE_MONTH_INACTIVE(cliente_id INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE ultima_fecha DATE;
+
+    SELECT MAX(DATE(fecha))
+    INTO ultima_fecha
+    FROM pedidos
+    WHERE id_cliente = cliente_id;
+    IF ultima_fecha IS NULL THEN
+        RETURN FALSE;
+    END IF;
+    IF ultima_fecha <= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+//
+DELIMITER ;
+DROP FUNCTION IF EXISTS THREE_MONTH_INACTIVE;
